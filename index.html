@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>9ja Shopping Management</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#f68b1e;--primary-dark:#e07b10;--secondary:#282828;--accent:#25D366;--light:#f8f8f8;--white:#fff;--text:#333;--border:#e0e0e0;--shadow:0 2px 10px rgba(0,0,0,.08);--radius:8px}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:var(--light);color:var(--text);line-height:1.6}
+.container{max-width:1200px;margin:0 auto;padding:0 15px}
+.header{background:var(--secondary);color:#fff;padding:12px 0;position:sticky;top:0;z-index:1000;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.header-content{display:flex;align-items:center;gap:15px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:8px;font-size:1.3rem;font-weight:700;cursor:pointer}
+.logo i{color:var(--primary);font-size:1.5rem}
+.search-box{flex:1;display:flex;min-width:180px;max-width:450px}
+.search-box input{flex:1;padding:10px 14px;border:none;border-radius:var(--radius) 0 0 var(--radius);font-size:.95rem;outline:none}
+.search-box button{background:var(--primary);border:none;color:#fff;padding:0 16px;border-radius:0 var(--radius) var(--radius) 0;cursor:pointer}
+.header-actions{display:flex;align-items:center;gap:12px}
+.cart-icon{position:relative;cursor:pointer;font-size:1.3rem;padding:6px}
+.cart-count{position:absolute;top:-5px;right:-5px;background:var(--primary);color:#fff;font-size:.7rem;font-weight:700;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.wa-btn{background:var(--accent);color:#fff;padding:8px 12px;border-radius:var(--radius);text-decoration:none;font-size:.85rem;font-weight:600;display:flex;align-items:center;gap:5px}
+.navbar{background:#fff;border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+.nav-links{display:flex;list-style:none;gap:4px;overflow-x:auto;padding:10px 0;scrollbar-width:none}
+.nav-links li{padding:7px 14px;cursor:pointer;white-space:nowrap;border-radius:20px;font-size:.88rem;font-weight:500}
+.nav-links li:hover,.nav-links li.active{background:var(--primary);color:#fff}
+.main-content{min-height:60vh;padding:20px 0 40px}
+.page{display:none}.page.active{display:block}
+.hero{background:linear-gradient(135deg,#282828,#3d3d3d);color:#fff;padding:45px 0;text-align:center;margin-bottom:25px}
+.hero h1{font-size:1.8rem;margin-bottom:8px}
+.hero p{opacity:.9;margin-bottom:18px}
+.btn-primary{background:var(--primary);color:#fff;border:none;padding:11px 26px;border-radius:var(--radius);font-size:1rem;font-weight:600;cursor:pointer}
+.btn-whatsapp{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;padding:13px 22px;border-radius:var(--radius);text-decoration:none;font-weight:600}
+.btn-whatsapp-small{display:inline-block;background:var(--accent);color:#fff;padding:7px 14px;border-radius:var(--radius);text-decoration:none;font-size:.9rem;margin-top:6px}
+.back-btn{background:none;border:1px solid var(--border);padding:8px 14px;border-radius:var(--radius);cursor:pointer;margin-bottom:18px;font-size:.9rem}
+.section-title{font-size:1.4rem;margin-bottom:18px;color:var(--secondary);border-left:4px solid var(--primary);padding-left:12px}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:15px}
+.product-card{background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);cursor:pointer}
+.product-card:hover{transform:translateY(-4px);box-shadow:0 8px 18px rgba(0,0,0,.12)}
+.product-image{width:100%;height:170px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:2.8rem;color:#ccc;overflow:hidden}
+.product-image img{width:100%;height:100%;object-fit:cover}
+.product-info{padding:12px}
+.product-category{font-size:.72rem;color:var(--primary);text-transform:uppercase;font-weight:600;margin-bottom:4px}
+.product-name{font-size:.95rem;font-weight:600;margin-bottom:6px;color:var(--secondary);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.product-price{font-size:1.1rem;font-weight:700;color:var(--primary);margin-bottom:10px}
+.product-actions{display:flex;gap:6px}
+.btn-add-cart{flex:1;background:var(--secondary);color:#fff;border:none;padding:7px;border-radius:var(--radius);cursor:pointer;font-size:.82rem}
+.btn-view{background:var(--primary);color:#fff;border:none;padding:7px 10px;border-radius:var(--radius);cursor:pointer;font-size:.82rem}
+.product-detail{background:#fff;border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);display:grid;grid-template-columns:1fr 1fr;gap:25px}
+.detail-image{width:100%;height:300px;background:#f0f0f0;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:5rem;color:#ccc;overflow:hidden}
+.detail-image img{width:100%;height:100%;object-fit:cover}
+.detail-info h1{font-size:1.45rem;margin-bottom:8px}
+.detail-price{font-size:1.6rem;font-weight:700;color:var(--primary);margin-bottom:12px}
+.detail-category{display:inline-block;background:#fff3e0;color:var(--primary);padding:3px 11px;border-radius:20px;font-size:.82rem;font-weight:600;margin-bottom:12px}
+.features-box{background:var(--light);padding:14px;border-radius:var(--radius);margin:15px 0}
+.features-box h3{margin-bottom:8px}
+.features-box ul{padding-left:18px}
+.features-box li{margin-bottom:5px}
+.detail-actions{display:flex;flex-direction:column;gap:10px;margin-top:20px}
+.btn-add-large{background:var(--secondary);color:#fff;border:none;padding:13px;border-radius:var(--radius);font-size:1rem;font-weight:600;cursor:pointer}
+.btn-order-wa{background:var(--accent);color:#fff;border:none;padding:13px;border-radius:var(--radius);font-size:1rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+.cart-item{background:#fff;border-radius:var(--radius);padding:14px;margin-bottom:12px;display:flex;gap:12px;align-items:center;box-shadow:var(--shadow)}
+.cart-item-image{width:70px;height:70px;background:#f0f0f0;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0;overflow:hidden}
+.cart-item-image img{width:100%;height:100%;object-fit:cover}
+.cart-item-info{flex:1}
+.cart-item-price{color:var(--primary);font-weight:600}
+.cart-item-qty{display:flex;align-items:center;gap:8px;margin-top:6px}
+.cart-item-qty button{width:26px;height:26px;border:1px solid var(--border);background:#fff;border-radius:4px;cursor:pointer;font-weight:600}
+.cart-item-remove{background:#ffebee;color:#c62828;border:none;padding:7px 10px;border-radius:var(--radius);cursor:pointer;font-size:.82rem}
+.cart-summary{background:#fff;border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin-top:18px}
+.summary-row{display:flex;justify-content:space-between;margin-bottom:8px}
+.summary-total{font-size:1.25rem;font-weight:700;color:var(--primary);border-top:2px solid var(--border);padding-top:10px;margin-top:8px}
+.empty-cart{text-align:center;padding:50px 20px;background:#fff;border-radius:var(--radius)}
+.empty-cart i{font-size:3.5rem;color:#ccc;margin-bottom:12px}
+.policies{background:#fff;border-radius:var(--radius);padding:25px;box-shadow:var(--shadow)}
+.policy-section{margin-bottom:25px;padding-bottom:18px;border-bottom:1px solid var(--border)}
+.policy-section h3{margin-bottom:10px}
+.policy-section ul{padding-left:18px}
+.footer{background:var(--secondary);color:#ccc;padding:35px 0 18px;margin-top:35px}
+.footer-content{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:25px;margin-bottom:25px}
+.footer-section h3,.footer-section h4{color:#fff;margin-bottom:12px}
+.footer-section ul{list-style:none}
+.footer-section ul li{margin-bottom:6px;cursor:pointer}
+.footer-bottom{text-align:center;padding-top:18px;border-top:1px solid #444;font-size:.88rem}
+
+/* Admin styles */
+.admin-login,.admin-panel{background:#fff;border-radius:var(--radius);padding:25px;box-shadow:var(--shadow);max-width:600px;margin:0 auto}
+.admin-login input,.admin-panel input,.admin-panel select,.admin-panel textarea{width:100%;padding:11px;margin:8px 0 15px;border:1px solid var(--border);border-radius:var(--radius);font-size:.95rem}
+.admin-panel label{font-weight:600;font-size:.9rem}
+.admin-btn{background:var(--primary);color:#fff;border:none;padding:12px 20px;border-radius:var(--radius);font-weight:600;cursor:pointer;width:100%;margin-top:8px}
+.admin-btn.danger{background:#c62828}
+.admin-product-list{margin-top:25px}
+.admin-product-item{display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid var(--border);gap:10px}
+.admin-product-item img{width:50px;height:50px;object-fit:cover;border-radius:6px}
+.admin-actions{display:flex;gap:8px}
+.admin-actions button{padding:6px 10px;border:none;border-radius:5px;cursor:pointer;font-size:.8rem}
+.btn-edit{background:#e3f2fd;color:#1565c0}
+.btn-del{background:#ffebee;color:#c62828}
+
+@media(max-width:768px){
+.header-content{gap:10px}
+.search-box{order:3;max-width:100%;width:100%}
+.hero h1{font-size:1.4rem}
+.product-detail{grid-template-columns:1fr}
+.detail-image{height:240px}
+.products-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.product-image{height:150px}
+}
+</style>
+</head>
+<body>
+<header class="header">
+<div class="container header-content">
+<div class="logo" onclick="showPage('home')"><i class="fas fa-shopping-bag"></i><span>9ja Shopping</span></div>
+<div class="search-box">
+<input type="text" id="searchInput" placeholder="Search products..." onkeyup="searchProducts()">
+<button onclick="searchProducts()"><i class="fas fa-search"></i></button>
+</div>
+<div class="header-actions">
+<div class="cart-icon" onclick="showPage('cart')"><i class="fas fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></div>
+<a href="https://wa.me/2348166205689" target="_blank" class="wa-btn"><i class="fab fa-whatsapp"></i> Chat</a>
+</div>
+</div>
+</header>
+
+<nav class="navbar">
+<div class="container">
+<ul class="nav-links">
+<li onclick="showPage('home')">Home</li>
+<li onclick="filterCategory('all')">All</li>
+<li onclick="filterCategory('bags')">Bags</li>
+<li onclick="filterCategory('clothing')">Clothing</li>
+<li onclick="filterCategory('traditional')">Traditional</li>
+<li onclick="filterCategory('shoes')">Shoes</li>
+<li onclick="filterCategory('watches')">Watches</li>
+<li onclick="filterCategory('accessories')">Accessories</li>
+<li onclick="showPage('admin')" style="color:var(--primary);font-weight:700">Admin</li>
+</ul>
+</div>
+</nav>
+
+<main class="main-content">
+<section id="homePage" class="page active">
+<div class="hero"><div class="container">
+<h1>Welcome to 9ja Shopping Management</h1>
+<p>Quality Fashion • Bags • Watches • Traditional Wear • Shoes & More</p>
+<button class="btn-primary" onclick="filterCategory('all')">Shop Now</button>
+</div></div>
+<div class="container"><h2 class="section-title">Featured Products</h2><div class="products-grid" id="homeProducts"></div></div>
+</section>
+
+<section id="productsPage" class="page">
+<div class="container"><h2 class="section-title" id="categoryTitle">All Products</h2><div class="products-grid" id="productsGrid"></div></div>
+</section>
+
+<section id="productDetailPage" class="page">
+<div class="container">
+<button class="back-btn" onclick="showPage('products')"><i class="fas fa-arrow-left"></i> Back</button>
+<div class="product-detail" id="productDetail"></div>
+</div>
+</section>
+
+<section id="cartPage" class="page">
+<div class="container">
+<h2 class="section-title">Your Shopping Cart</h2>
+<div id="cartItems"></div>
+<div class="cart-summary" id="cartSummary"></div>
+</div>
+</section>
+
+<section id="policiesPage" class="page">
+<div class="container policies">
+<h2>Terms, Policies & Agreement</h2>
+<div class="policy-section"><h3>1. Payment Terms</h3>
+<p>All payments are made via WhatsApp: <strong>08166205689</strong>.</p>
+<p>Click "Order via WhatsApp" to chat with us for payment and delivery.</p></div>
+<div class="policy-section"><h3>2. Customer Agreement</h3>
+<ul><li>By ordering you agree products are as described.</li>
+<li>Provide correct contact and delivery address.</li>
+<li>Complete payment as agreed on WhatsApp.</li></ul></div>
+<div class="policy-section"><h3>3. Return Policy</h3>
+<ul><li>Return within 7 days if defective or wrong item.</li>
+<li>Item must be unused with original packaging.</li></ul></div>
+<div class="policy-section"><h3>4. Contact</h3>
+<a href="https://wa.me/2348166205689" target="_blank" class="btn-whatsapp"><i class="fab fa-whatsapp"></i> Chat: 08166205689</a></div>
+</div>
+</section>
+
+<!-- ADMIN PAGE -->
+<section id="adminPage" class="page">
+<div class="container">
+<div id="adminLogin" class="admin-login">
+<h2 style="margin-bottom:15px">Admin Login</h2>
+<p style="margin-bottom:15px;color:#666">Enter password to manage products</p>
+<input type="password" id="adminPass" placeholder="Enter password">
+<button class="admin-btn" onclick="loginAdmin()">Login</button>
+<p style="margin-top:12px;font-size:.85rem;color:#888">Default password: <strong>EGHOSA 2011</strong></p>
+</div>
+
+<div id="adminPanel" class="admin-panel" style="display:none;max-width:700px">
+<h2 style="margin-bottom:5px">Admin Panel</h2>
+<p style="margin-bottom:20px;color:#666">Add or manage your products here</p>
+
+<label>Product Name</label>
+<input type="text" id="pName" placeholder="e.g. Ankara Shirt">
+
+<label>Price (₦)</label>
+<input type="number" id="pPrice" placeholder="e.g. 15000">
+
+<label>Category</label>
+<select id="pCategory">
+<option value="bags">Bags</option>
+<option value="clothing">Clothing</option>
+<option value="traditional">Traditional</option>
+<option value="shoes">Shoes</option>
+<option value="watches">Watches</option>
+<option value="accessories">Accessories</option>
+</select>
+
+<label>Product Photo (Take photo or choose from gallery)</label>
+<input type="file" id="pImageFile" accept="image/*" capture="environment" style="padding:10px;border:1px dashed #ccc;border-radius:8px;width:100%;margin:8px 0 8px;">
+<div id="imagePreview" style="margin:10px 0;display:none;">
+    <img id="previewImg" style="max-width:150px;max-height:150px;border-radius:8px;border:1px solid #ddd;">
+    <br><small style="color:#666">Photo selected ✓</small>
+</div>
+<input type="hidden" id="pImage">
+
+<label>Features (one per line)</label>
+<textarea id="pFeatures" rows="4" placeholder="Soft cotton fabric&#10;Good quality&#10;Comfortable fit"></textarea>
+
+<button class="admin-btn" onclick="saveProduct()">Save Product</button>
+<button class="admin-btn" style="background:#666;margin-top:8px" onclick="logoutAdmin()">Logout</button>
+
+<div class="admin-product-list">
+<h3 style="margin:25px 0 12px">Your Products (<span id="adminCount">0</span>)</h3>
+<div id="adminList"></div>
+</div>
+</div>
+</div>
+</section>
+</main>
+
+<footer class="footer">
+<div class="container">
+<div class="footer-content">
+<div class="footer-section"><h3>9ja Shopping Management</h3><p>Your trusted online store for quality fashion and more.</p></div>
+<div class="footer-section"><h4>Quick Links</h4>
+<ul>
+<li onclick="showPage('home')">Home</li>
+<li onclick="filterCategory('all')">All Products</li>
+<li onclick="showPage('cart')">Cart</li>
+<li onclick="showPage('policies')">Terms & Policies</li>
+<li onclick="showPage('admin')">Admin</li>
+</ul></div>
+<div class="footer-section"><h4>Contact</h4>
+<p><i class="fab fa-whatsapp"></i> 08166205689</p>
+<a href="https://wa.me/2348166205689" target="_blank" class="btn-whatsapp-small">Chat Now</a>
+</div>
+</div>
+<div class="footer-bottom"><p>&copy; 2026 9ja Shopping Management</p></div>
+</div>
+</footer>
+
+<script>
+// Default sample products
+const defaultProducts = [
+{id:1,name:"Premium Leather Backpack",category:"bags",price:18500,icon:"🎒",features:["High-quality genuine leather","Laptop sleeve up to 15.6\"","Multiple pockets","Durable and water-resistant"]},
+{id:2,name:"Stylish Crossbody Bag",category:"bags",price:9500,icon:"👜",features:["Lightweight","Adjustable strap","Secure zip","Trendy design"]},
+{id:3,name:"Classic Polo Shirt",category:"clothing",price:7500,icon:"👕",features:["Soft cotton-blend","Breathable","Classic fit","Durable stitching"]},
+{id:4,name:"Premium Hoodie",category:"clothing",price:14500,icon:"🧥",features:["Thick warm fleece","Soft inner material","Drawstring hood","Kangaroo pocket"]},
+{id:5,name:"Ankara Shirt - Male",category:"traditional",price:15000,icon:"🥻",features:["Authentic Ankara print","High quality cotton","Comfortable","Well-tailored"]},
+{id:6,name:"Senator Native Wear Set",category:"traditional",price:35000,icon:"👔",features:["Complete set","Premium fabric","Elegant look","Perfect for events"]},
+{id:7,name:"Classic Sneakers",category:"shoes",price:16500,icon:"👟",features:["Cushioned sole","Breathable","Durable outsole","Everyday style"]},
+{id:8,name:"Leather Loafers",category:"shoes",price:22000,icon:"👞",features:["Genuine leather","Slip-on","Comfortable","Smart casual"]},
+{id:9,name:"Classic Analog Watch",category:"watches",price:18500,icon:"⌚",features:["Stainless steel","Quartz movement","Water resistant","Date display"]},
+{id:10,name:"Designer Sunglasses",category:"accessories",price:8500,icon:"🕶️",features:["UV protection","Stylish frame","Lightweight","Comfortable fit"]},
+{id:11,name:"Agbada Complete Set",category:"traditional",price:55000,icon:"👘",features:["Full set with embroidery","Rich design","High quality","For special ceremonies"]},
+{id:12,name:"Slim Fit Jeans",category:"clothing",price:12500,icon:"👖",features:["Stretch denim","Modern slim fit","Durable","Versatile"]}
+];
+
+let products = [];
+let cart = JSON.parse(localStorage.getItem('9jaCart')) || [];
+let currentCategory = 'all';
+let editingId = null;
+
+// Load products
+function loadProducts() {
+    const saved = localStorage.getItem('9jaProducts');
+    if (saved) {
+        products = JSON.parse(saved);
+    } else {
+        products = [...defaultProducts];
+        saveProductsToStorage();
+    }
+}
+
+function saveProductsToStorage() {
+    localStorage.setItem('9jaProducts', JSON.stringify(products));
+}
+
+loadProducts();
+
+document.addEventListener('DOMContentLoaded', () => {
+    updateCartCount();
+    renderHomeProducts();
+    renderProducts('all');
+});
+
+function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    if (name === 'home') {
+        document.getElementById('homePage').classList.add('active');
+        renderHomeProducts();
+    } else if (name === 'products') {
+        document.getElementById('productsPage').classList.add('active');
+    } else if (name === 'productDetail') {
+        document.getElementById('productDetailPage').classList.add('active');
+    } else if (name === 'cart') {
+        document.getElementById('cartPage').classList.add('active');
+        renderCart();
+    } else if (name === 'policies') {
+        document.getElementById('policiesPage').classList.add('active');
+    } else if (name === 'admin') {
+        document.getElementById('adminPage').classList.add('active');
+        checkAdmin();
+    }
+    window.scrollTo(0,0);
+}
+
+function filterCategory(cat) {
+    currentCategory = cat;
+    const titles = {all:'All Products',bags:'Bags',clothing:'Clothing',traditional:'Traditional Wear',shoes:'Shoes',watches:'Watches',accessories:'Accessories'};
+    document.getElementById('categoryTitle').textContent = titles[cat] || 'Products';
+    renderProducts(cat);
+    showPage('products');
+}
+
+function renderProducts(cat) {
+    const grid = document.getElementById('productsGrid');
+    let list = cat === 'all' ? products : products.filter(p => p.category === cat);
+    if (list.length === 0) {
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px">No products yet. Add some in Admin.</p>';
+        return;
+    }
+    grid.innerHTML = list.map(p => createCard(p)).join('');
+}
+
+function renderHomeProducts() {
+    const grid = document.getElementById('homeProducts');
+    const mixed = products.slice(0, 12);
+    grid.innerHTML = mixed.map(p => createCard(p)).join('');
+}
+
+function createCard(p) {
+    const img = p.image ? `<img src="${p.image}" alt="${p.name}">` : (p.icon || '📦');
+    return `<div class="product-card">
+        <div class="product-image" onclick="viewProduct(${p.id})">${img}</div>
+        <div class="product-info">
+            <div class="product-category">${p.category}</div>
+            <div class="product-name" onclick="viewProduct(${p.id})">${p.name}</div>
+            <div class="product-price">₦${Number(p.price).toLocaleString()}</div>
+            <div class="product-actions">
+                <button class="btn-add-cart" onclick="event.stopPropagation();addToCart(${p.id})"><i class="fas fa-cart-plus"></i> Add</button>
+                <button class="btn-view" onclick="event.stopPropagation();viewProduct(${p.id})">View</button>
+            </div>
+        </div>
+    </div>`;
+}
+
+function viewProduct(id) {
+    const p = products.find(x => x.id === id);
+    if (!p) return;
+    const img = p.image ? `<img src="${p.image}" alt="${p.name}">` : (p.icon || '📦');
+    document.getElementById('productDetail').innerHTML = `
+        <div class="detail-image">${img}</div>
+        <div class="detail-info">
+            <span class="detail-category">${p.category.toUpperCase()}</span>
+            <h1>${p.name}</h1>
+            <div class="detail-price">₦${Number(p.price).toLocaleString()}</div>
+            <div class="features-box">
+                <h3><i class="fas fa-check-circle" style="color:var(--primary)"></i> Features</h3>
+                <ul>${(p.features||[]).map(f=>`<li>${f}</li>`).join('')}</ul>
+            </div>
+            <div class="features-box">
+                <h3><i class="fas fa-shield-alt" style="color:var(--primary)"></i> Quality Promise</h3>
+                <p>Selected for <strong>value</strong> and <strong>durability</strong>.</p>
+            </div>
+            <div class="detail-actions">
+                <button class="btn-add-large" onclick="addToCart(${p.id})"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+                <a href="https://wa.me/2348166205689?text=${encodeURIComponent('Hello! I want to order: '+p.name+' (₦'+Number(p.price).toLocaleString()+')')}" target="_blank" class="btn-order-wa">
+                    <i class="fab fa-whatsapp"></i> Order via WhatsApp
+                </a>
+            </div>
+        </div>`;
+    showPage('productDetail');
+}
+
+function addToCart(id) {
+    const p = products.find(x => x.id === id);
+    if (!p) return;
+    const exist = cart.find(i => i.id === id);
+    if (exist) exist.qty++;
+    else cart.push({id:p.id,name:p.name,price:p.price,icon:p.icon||'📦',image:p.image||'',qty:1});
+    localStorage.setItem('9jaCart', JSON.stringify(cart));
+    updateCartCount();
+    alert(p.name + ' added to cart!');
+}
+
+function updateCartCount() {
+    document.getElementById('cartCount').textContent = cart.reduce((s,i)=>s+i.qty,0);
+}
+
+function updateQty(id, change) {
+    const item = cart.find(i => i.id === id);
+    if (!item) return;
+    item.qty += change;
+    if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+    localStorage.setItem('9jaCart', JSON.stringify(cart));
+    updateCartCount();
+    renderCart();
+}
+
+function removeFromCart(id) {
+    cart = cart.filter(i => i.id !== id);
+    localStorage.setItem('9jaCart', JSON.stringify(cart));
+    updateCartCount();
+    renderCart();
+}
+
+function renderCart() {
+    const box = document.getElementById('cartItems');
+    const sum = document.getElementById('cartSummary');
+    if (cart.length === 0) {
+        box.innerHTML = `<div class="empty-cart"><i class="fas fa-shopping-cart"></i><h3>Your cart is empty</h3><br><button class="btn-primary" onclick="filterCategory('all')">Continue Shopping</button></div>`;
+        sum.innerHTML = '';
+        return;
+    }
+    box.innerHTML = cart.map(i => {
+        const img = i.image ? `<img src="${i.image}">` : i.icon;
+        return `<div class="cart-item">
+            <div class="cart-item-image">${img}</div>
+            <div class="cart-item-info">
+                <h4>${i.name}</h4>
+                <div class="cart-item-price">₦${Number(i.price).toLocaleString()}</div>
+                <div class="cart-item-qty">
+                    <button onclick="updateQty(${i.id},-1)">−</button>
+                    <span>${i.qty}</span>
+                    <button onclick="updateQty(${i.id},1)">+</button>
+                </div>
+            </div>
+            <div>
+                <div style="font-weight:600;margin-bottom:6px">₦${(i.price*i.qty).toLocaleString()}</div>
+                <button class="cart-item-remove" onclick="removeFromCart(${i.id})">Remove</button>
+            </div>
+        </div>`;
+    }).join('');
+    const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
+    let msg = "Hello! I want to order from 9ja Shopping:%0A%0A";
+    cart.forEach(i => { msg += `• ${i.name} x${i.qty} = ₦${(i.price*i.qty).toLocaleString()}%0A`; });
+    msg += `%0ATotal: ₦${total.toLocaleString()}%0A%0APlease confirm.`;
+    sum.innerHTML = `
+        <h3>Order Summary</h3>
+        <div class="summary-row"><span>Subtotal</span><span>₦${total.toLocaleString()}</span></div>
+        <div class="summary-row"><span>Delivery</span><span>To be confirmed</span></div>
+        <div class="summary-row summary-total"><span>Total</span><span>₦${total.toLocaleString()}</span></div>
+        <a href="https://wa.me/2348166205689?text=${msg}" target="_blank" class="btn-order-wa" style="width:100%;margin-top:18px;text-align:center">
+            <i class="fab fa-whatsapp"></i> Complete Order via WhatsApp
+        </a>`;
+}
+
+function searchProducts() {
+    const q = document.getElementById('searchInput').value.toLowerCase().trim();
+    if (!q) { renderProducts(currentCategory); showPage('products'); return; }
+    const res = products.filter(p => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) || (p.features||[]).some(f=>f.toLowerCase().includes(q)));
+    document.getElementById('categoryTitle').textContent = `Search: "${q}"`;
+    const grid = document.getElementById('productsGrid');
+    grid.innerHTML = res.length ? res.map(p=>createCard(p)).join('') : '<p style="grid-column:1/-1;text-align:center;padding:40px">No products found</p>';
+    showPage('products');
+}
+
+// ADMIN FUNCTIONS
+function checkAdmin() {
+    if (sessionStorage.getItem('9jaAdmin') === 'yes') {
+        document.getElementById('adminLogin').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        renderAdminList();
+    } else {
+        document.getElementById('adminLogin').style.display = 'block';
+        document.getElementById('adminPanel').style.display = 'none';
+    }
+}
+
+function loginAdmin() {
+    const pass = document.getElementById('adminPass').value.trim();
+    if (pass === 'EGHOSA 2011') {
+        sessionStorage.setItem('9jaAdmin', 'yes');
+        checkAdmin();
+    } else {
+        alert('Wrong password. Try: EGHOSA 2011');
+    }
+}
+
+function logoutAdmin() {
+    sessionStorage.removeItem('9jaAdmin');
+    checkAdmin();
+    document.getElementById('adminPass').value = '';
+}
+
+// Handle camera / gallery photo selection
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('pImageFile');
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (file.size > 2.5 * 1024 * 1024) {
+                alert('Image is too large. Please choose a smaller photo (under 2.5MB).');
+                fileInput.value = '';
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('pImage').value = event.target.result;
+                document.getElementById('previewImg').src = event.target.result;
+                document.getElementById('imagePreview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+});
+
+function saveProduct() {
+    const name = document.getElementById('pName').value.trim();
+    const price = document.getElementById('pPrice').value;
+    const category = document.getElementById('pCategory').value;
+    const image = document.getElementById('pImage').value.trim();
+    const featuresText = document.getElementById('pFeatures').value.trim();
+    if (!name || !price) {
+        alert('Please enter Product Name and Price');
+        return;
+    }
+    const features = featuresText ? featuresText.split('\n').filter(f=>f.trim()) : ['Good quality product'];
+    if (editingId) {
+        const p = products.find(x => x.id === editingId);
+        if (p) {
+            p.name = name;
+            p.price = Number(price);
+            p.category = category;
+            p.image = image;
+            p.features = features;
+        }
+        editingId = null;
+    } else {
+        const newId = products.length ? Math.max(...products.map(p=>p.id)) + 1 : 1;
+        products.push({
+            id: newId,
+            name,
+            price: Number(price),
+            category,
+            image: image || '',
+            icon: '📦',
+            features
+        });
+    }
+    saveProductsToStorage();
+    clearForm();
+    renderAdminList();
+    renderHomeProducts();
+    alert('Product saved successfully!');
+}
+
+function clearForm() {
+    document.getElementById('pName').value = '';
+    document.getElementById('pPrice').value = '';
+    document.getElementById('pImage').value = '';
+    document.getElementById('pFeatures').value = '';
+    document.getElementById('pImageFile').value = '';
+    document.getElementById('imagePreview').style.display = 'none';
+    document.getElementById('previewImg').src = '';
+    editingId = null;
+}
+
+function renderAdminList() {
+    document.getElementById('adminCount').textContent = products.length;
+    const list = document.getElementById('adminList');
+    if (products.length === 0) {
+        list.innerHTML = '<p style="color:#888">No products yet. Add your first product above.</p>';
+        return;
+    }
+    list.innerHTML = products.map(p => {
+        const img = p.image ? `<img src="${p.image}">` : `<span style="font-size:1.5rem">${p.icon||'📦'}</span>`;
+        return `<div class="admin-product-item">
+            <div style="display:flex;align-items:center;gap:10px">
+                ${img}
+                <div>
+                    <strong>${p.name}</strong><br>
+                    <small>₦${Number(p.price).toLocaleString()} • ${p.category}</small>
+                </div>
+            </div>
+            <div class="admin-actions">
+                <button class="btn-edit" onclick="editProduct(${p.id})">Edit</button>
+                <button class="btn-del" onclick="deleteProduct(${p.id})">Delete</button>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function editProduct(id) {
+    const p = products.find(x => x.id === id);
+    if (!p) return;
+    document.getElementById('pName').value = p.name;
+    document.getElementById('pPrice').value = p.price;
+    document.getElementById('pCategory').value = p.category;
+    document.getElementById('pImage').value = p.image || '';
+    document.getElementById('pFeatures').value = (p.features||[]).join('\n');
+    if (p.image) {
+        document.getElementById('previewImg').src = p.image;
+        document.getElementById('imagePreview').style.display = 'block';
+    } else {
+        document.getElementById('imagePreview').style.display = 'none';
+    }
+    editingId = id;
+    window.scrollTo(0,0);
+}
+
+function deleteProduct(id) {
+    if (!confirm('Delete this product?')) return;
+    products = products.filter(p => p.id !== id);
+    saveProductsToStorage();
+    renderAdminList();
+    renderHomeProducts();
+}
+</script>
+</body>
+</html>
